@@ -1,0 +1,1120 @@
+
+
+
+Root DNSSEC Design Team                                      J. Schlyter
+                                                            F. Ljunggren
+                                                                   Kirei
+                                                                 R. Lamb
+                                                                   ICANN
+                                                             May 7, 2010
+
+
+                 Root Zone DNSSEC KSK Ceremonies Guide
+
+Abstract
+
+   This document specifies key ceremonies to be executed by the Root
+   Zone Key Signing Key Operator in the deployment of DNSSEC.
+
+Copyright Notice
+
+   Copyright (c) 2010 Internet Corporation For Assigned Names and
+   Numbers.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Schlyter, et al.                                                [Page 1]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+Table of Contents
+
+   1.  Introduction . . . . . . . . . . . . . . . . . . . . . . . . .  4
+   2.  Roles  . . . . . . . . . . . . . . . . . . . . . . . . . . . .  4
+     2.1.  Ceremony Administrator (CA)  . . . . . . . . . . . . . . .  4
+     2.2.  Safe Security Controllers (SSC)  . . . . . . . . . . . . .  5
+     2.3.  System Administrator (SA)  . . . . . . . . . . . . . . . .  5
+     2.4.  Internal Witness (IW)  . . . . . . . . . . . . . . . . . .  6
+     2.5.  External Witness (EW)  . . . . . . . . . . . . . . . . . .  6
+     2.6.  Crypto Officers (CO) . . . . . . . . . . . . . . . . . . .  6
+     2.7.  Recovery Key Share Holders (RKSH)  . . . . . . . . . . . .  7
+   3.  General Ceremony Provisions  . . . . . . . . . . . . . . . . .  7
+     3.1.  Ceremony Initiation  . . . . . . . . . . . . . . . . . . .  7
+     3.2.  Ceremony Attendees . . . . . . . . . . . . . . . . . . . .  7
+     3.3.  Pre Ceremony Actions . . . . . . . . . . . . . . . . . . .  7
+     3.4.  Post-Ceremony Actions  . . . . . . . . . . . . . . . . . .  8
+     3.5.  Cryptographic Material Storage and Transportation  . . . .  8
+     3.6.  Dual Occupancy . . . . . . . . . . . . . . . . . . . . . .  8
+   4.  Key Management Ceremonies  . . . . . . . . . . . . . . . . . .  8
+     4.1.  Key Management Ceremonies Prologue . . . . . . . . . . . .  8
+     4.2.  HSM Initialisation . . . . . . . . . . . . . . . . . . . .  8
+     4.3.  HSM Decommission . . . . . . . . . . . . . . . . . . . . . 10
+     4.4.  Key Generation . . . . . . . . . . . . . . . . . . . . . . 10
+     4.5.  Key Signing (aka KSR Processing) . . . . . . . . . . . . . 11
+     4.6.  Private Key Deletion . . . . . . . . . . . . . . . . . . . 12
+     4.7.  Key Management Ceremonies Epilogue . . . . . . . . . . . . 12
+   5.  Administrative Ceremonies  . . . . . . . . . . . . . . . . . . 12
+     5.1.  Safe Security Controller Enrolment . . . . . . . . . . . . 12
+     5.2.  Safe Security Controller Replacement . . . . . . . . . . . 13
+     5.3.  Safe Security Controller Recovery  . . . . . . . . . . . . 13
+     5.4.  Crypto Officer Enrolment . . . . . . . . . . . . . . . . . 14
+     5.5.  Crypto Officer Replacement . . . . . . . . . . . . . . . . 14
+     5.6.  Crypto Officer Recovery  . . . . . . . . . . . . . . . . . 15
+     5.7.  Recovery Key Share Holder Replacement  . . . . . . . . . . 15
+     5.8.  Issuing New Recovery Key Shares  . . . . . . . . . . . . . 15
+     5.9.  Media Deposit  . . . . . . . . . . . . . . . . . . . . . . 16
+     5.10. Media Extraction . . . . . . . . . . . . . . . . . . . . . 16
+     5.11. Equipment Acceptance Test  . . . . . . . . . . . . . . . . 16
+     5.12. Equipment Maintenance  . . . . . . . . . . . . . . . . . . 16
+   6.  Unplanned Events . . . . . . . . . . . . . . . . . . . . . . . 16
+   7.  References . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+   Appendix A.  Secure Facility Tiers . . . . . . . . . . . . . . . . 17
+     A.1.  Tier 1-3 . . . . . . . . . . . . . . . . . . . . . . . . . 17
+     A.2.  Tier 4 . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+     A.3.  Tier 5 . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+     A.4.  Tier 6 . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+     A.5.  Tier 7 . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+   Appendix B.  Tier Access Matrix  . . . . . . . . . . . . . . . . . 18
+
+
+
+Schlyter, et al.                                                [Page 2]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+   Appendix C.  Number of People Summary  . . . . . . . . . . . . . . 18
+   Appendix D.  Number of People per Ceremony . . . . . . . . . . . . 19
+   Authors' Addresses . . . . . . . . . . . . . . . . . . . . . . . . 19
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Schlyter, et al.                                                [Page 3]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+1.  Introduction
+
+   The Domain Name System (DNS) is described in [RFC1034] and [RFC1035].
+   Security extensions to the DNS (DNSSEC) are described in [RFC4033],
+   [RFC4034] and [RFC4035].
+
+   This document specifies key ceremonies to be executed by the Root
+   Zone Key Signing Key Operator (ICANN, as per the IANA functions
+   contract) in the deployment of DNSSEC.
+
+   NOTE: Specific sub-procedures are not specified in this document -
+   please refer to the key ceremony scripts for more information.
+
+   This document uses female personal pronouns when referring to
+   ceremony roles.  This is an arbitrary convention adopted in the
+   interests of linguistic consistency.
+
+
+2.  Roles
+
+2.1.  Ceremony Administrator (CA)
+
+   The Ceremony Administrator executes the key ceremony as described in
+   the key ceremony procedures (see Section 4 and Section 5).
+
+   The Ceremony Administrator holds a common key to all the safe deposit
+   boxes contained within the Credentials Safe (see Section 2.2).  The
+   Ceremony Administrator is personally responsible for storing the key
+   in a safe place.  The common key is, in combination with each Crypto
+   Officer's safe deposit key, used to open that Crypto Officers's safe
+   deposit box.
+
+   The Ceremony Administrator is a trusted role performed by ICANN
+   staff.
+
+   Facility Access: the Ceremony Administrator may access tier 1-3 by
+   herself and tier 4-5 when escorted by an Internal Witness.  The
+   Ceremony Administrator also has physical access to the secure off-
+   site backup facility where copies of the audit log information are
+   stored.
+
+   Number of Persons Required: two (2) Ceremony Administrators are
+   required per site.  Individual Ceremony Administrators may serve
+   multiple sites if needed.
+
+
+
+
+
+
+
+Schlyter, et al.                                                [Page 4]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+2.2.  Safe Security Controllers (SSC)
+
+   The Safe Security Controllers hold the combinations for the safes
+   containing the HSMs (Equipment Safe) and to the safes containing the
+   Crypto Officers' safety-deposit boxes (Credentials Safe).
+
+   There are two (2) different Safe Security Controller roles:
+
+   o  Safe Security Controller #1 (SSC1) holds the combination to Safe
+      #1 (Equipment Safe).
+
+   o  Safe Security Controller #2 (SSC2) holds the combination to Safe
+      #2 (Credentials Safe).
+
+   Safe Security Controller is a trusted role performed by ICANN staff.
+
+   Facility Access: each Safe Security Controller has access to her
+   respective safe, located within tier 5, only.
+
+   Number of Persons Required: two (2) Safe Security Controllers per
+   safe are required per site, giving a total of four (4) persons per
+   site.  A person serving as an SSC1 may not serve as an SSC2 and vice
+   versa.  Safe Security Controllers may not serve multiple sites.
+   Replacement of an SSC requires a change in combination for the
+   corresponding safe.
+
+2.3.  System Administrator (SA)
+
+   The System Administrator is a support role with the competence of
+   resolving sudden problems arising from technical failures of the
+   equipment needed at the key ceremony, e.g., access control systems,
+   audio-visual equipment, computer and HSM, cabling and the HVAC
+   system.
+
+   The System Administrator role may also be used to escort unauthorised
+   people, e.g., Crypto Officers, maintenance personnel and external
+   witnesses, within the secure facility.
+
+   System Administrator is a trusted role performed by ICANN staff.
+
+   Facility Access: the System Administrator can access tier 1-3 by
+   herself and tier 4 when escorted by an Internal Witness.
+
+   Number of Persons Required: two (2) System Administrators are
+   required per site.  System Administrators may serve multiple sites if
+   needed.
+
+
+
+
+
+Schlyter, et al.                                                [Page 5]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+2.4.  Internal Witness (IW)
+
+   The Internal Witness observes the key ceremony and attests that it
+   has been executed as described in the key ceremony procedures (see
+   Section 4 and Section 5).  After the ceremony, the witness signs an
+   affidavit which is subsequently notarised by a Notary Public.
+
+   In order to comply with the dual occupancy requirement (see
+   Section 3.6, multiple Internal Witnesses may be required during a
+   single key ceremony.
+
+   Internal Witness is a trusted role performed by ICANN staff.
+
+   Facility Access: the Internal Witness can access tier 1-3 by herself,
+   tier 4 when escorted by Ceremony Administrator or a System
+   Administrator, and tier 5 when escorted by a Ceremony Administrator.
+
+   Number of Persons Required: two (2) Internal Witnesses are required
+   per site.  Internal Witnesses may serve multiple sites if needed.
+
+2.5.  External Witness (EW)
+
+   The External Witnesses observe the key ceremony and attest that it
+   has been executed as described in the key ceremony procedures (see
+   Section 4 and Section 5).
+
+   External Witnesses are not affiliated with ICANN.  An auditor is
+   considered to be an External Witness in this context.
+
+   External Witness is NOT a trusted role.
+
+   The External Witness has no access to any tier and must be escorted
+   at all times.
+
+2.6.  Crypto Officers (CO)
+
+   Crypto Officers each hold a key to a safe deposit box placed inside
+   Safe #2 (Credentials Safe).  The Crypto Officer is personally
+   responsible for the key both during and outside key ceremonies, and
+   for storing the key in a safe place.  Each safe deposit box contains
+   the credentials (in tamper evident packaging) needed for the
+   corresponding Crypto Officer to authorise operations performed with
+   the Hardware Security Modules.
+
+   Crypto Officers are Trusted Community Representatives (TCRs),
+   representing the technical DNS community.
+
+   Crypto Officer is a trusted role.
+
+
+
+Schlyter, et al.                                                [Page 6]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+   Facility Access: the Crypto Officer has no access to any tier and
+   must be escorted at all times.
+
+   Number of Persons Required: seven (7) Crypto Officers are required
+   per site.  No Crypto Officer may serve multiple sites.
+
+2.7.  Recovery Key Share Holders (RKSH)
+
+   Each Recovery Key Share Holder holds a key to a bank safe deposit box
+   or similar secure storage facility chosen by the RKSH in some
+   convenient location, remote from the key ceremony facilities.  The
+   safe deposit box contains a smartcard (in tamper-evident packaging)
+   which holds a share of the HSM internal encryption key (sometimes
+   referred to as a Storage Master Key or SMK).
+
+   The Recovery Key Share holder is required to provide and maintain
+   records of where the smartcard is stored, and to participate in an
+   annual inventory providing proof of possession of their key share.
+
+   Recovery Key Share Holders are Trusted Community Representatives
+   (TCRs), representing the technical DNS community.
+
+   Recovery Key Share Holder is a trusted role.
+
+   Facility Access: the Recovery Key Share Holder has no access to any
+   tier and must be escorted at all times.
+
+   Number of Persons Required: seven (7) Recovery Key Share Holders in
+   total are required, and are common for all sites.
+
+
+3.  General Ceremony Provisions
+
+3.1.  Ceremony Initiation
+
+   All ceremonies are initiated by the Ceremony Administrator.
+
+3.2.  Ceremony Attendees
+
+   The Ceremony Administrator is responsible for coordinating ceremony
+   attendees.  See Appendix D for more information on what roles are
+   required for each ceremony.
+
+3.3.  Pre Ceremony Actions
+
+   Before the ceremony is executed, the Ceremony Administrator will
+   prepare the scripts to be followed at the ceremony.  Multiple types
+   of ceremonies may be executed together at a single event.
+
+
+
+Schlyter, et al.                                                [Page 7]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+   The specific sub-procedures required for each ceremony are specified
+   in the key ceremony scripts.
+
+3.4.  Post-Ceremony Actions
+
+   After a ceremony has been executed, the Ceremony Administrator will
+   bring all ceremony output (e.g. signed scripts, audit logs, signed
+   data, cryptographic material) from the secure facility and make sure
+   any extracted cryptographic material is stored safely until ready for
+   further transportation or processing.
+
+   The Ceremony Administrator will also make copies of the ceremony
+   output.  The copies are to be archived at ICANN, at the secure
+   facility and at least one of the Backup Storage locations.
+
+3.5.  Cryptographic Material Storage and Transportation
+
+   Cryptographic material is stored and transported in tamper-evident
+   bags at all times.
+
+   Private components of the KSK are not used for signing while in
+   transit.
+
+3.6.  Dual Occupancy
+
+   Access to tier 4 and 5 is subject to enforcement of dual occupancy of
+   authorised persons, i.e. the same rules apply for occupancy as for
+   entry.
+
+
+4.  Key Management Ceremonies
+
+   Key Management Ceremonies are ceremonies that involve activation of
+   an HSM.  The ceremonies are designed to be executed in the order
+   below, but sections not applicable for a given ceremony may be
+   skipped by the Ceremony Administrator.
+
+4.1.  Key Management Ceremonies Prologue
+
+   Before any other Key Management action can be executed, Crypto
+   Officer credentials and HSMs must be extracted from their respective
+   safes and placed into Tier 4 (Key Ceremony Room).
+
+4.2.  HSM Initialisation
+
+   A new HSM must be initialised before use.  As part of the
+   initialisation process, HSMs are configured with the encryption keys
+   used for backing up key material and configured to require Crypto
+
+
+
+Schlyter, et al.                                                [Page 8]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+   Officer credentials for access.
+
+   NOTE: The HSM must pass the acceptance test as described in
+   Section 5.11 before initialisation.
+
+4.2.1.  All HSMs
+
+   This part of the procedure is executed for all HSMs being
+   initialised.
+
+   1.  Verify HSM hardware integrity by checking the serial number of
+       the tamper-evident bag in which the device was stored and the
+       device's serial number.
+
+   2.  Perform basic HSM configuration.
+
+   3.  Issue two (2) sets of Crypto Officer credentials.  HSMs at the
+       same site may share credentials.
+
+   4.  Distribute Crypto Officer credentials to their respective Crypto
+       Officers.
+
+4.2.2.  First HSM sharing a Recovery Key
+
+   This part of the procedure is executed for the first HSM of a set of
+   HSMs sharing one recovery key.
+
+   1.  Generate Recovery Key (aka Storage Master Key).
+
+   2.  Split and export two (2) sets of Recovery Key Shares.
+
+   3.  Store Recovery Key Shares in tamper-evident bags.  Two (2)
+       Recovery Key Shares, one from each set, should be stored in each
+       bag.
+
+   4.  Distribute Recovery Key Shares to RKSH.
+
+4.2.3.  Other HSMs Sharing a Recovery Key
+
+   This procedure is executed for all but the first HSM of a set of HSMs
+   which share a single recovery key.
+
+   o  Assemble and restore Recovery Key from Key Shares.
+
+
+
+
+
+
+
+
+Schlyter, et al.                                                [Page 9]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+4.3.  HSM Decommission
+
+   The purpose of the HSM Decommission process is to ensure that all
+   non-public security keys and parameters are erased.
+
+   1.  Zeroise and tamper the HSM.
+
+   2.  Verify that the HSM has been reset.
+
+   3.  Optionally return HSM to the vendor for recommission.
+
+4.4.  Key Generation
+
+   Key generation is split into two phases: phase 1 is executed at one
+   site and phase 2 is executed at the other site.  After phase 1 has
+   been executed, two (2) copies of the application data (i.e. encrypted
+   keys and associated data) is promptly transported to the other site
+   and deposited as described in Section 5.9 until phase 2 can be
+   executed.  Phase 2 is normally executed together with another
+   scheduled key management ceremony, e.g., key signing.
+
+4.4.1.  Phase 1 (at one site)
+
+   1.  Generate new key in HSM #1:
+
+       A.  Activate HSM #1.
+
+       B.  Generate new key.
+
+       C.  Announce hash (fingerprint) of generated key to participating
+           witnesses.  The hash is presented in PGP Word List format.
+
+       D.  Export public key components to portable media.
+
+       E.  Backup application data to four (4) pieces of portable media.
+
+       F.  Deactivate HSM #1
+
+   2.  Restore new key to HSM #2:
+
+       A.  Activate HSM #2.
+
+       B.  Restore application data backup to HSM #2.
+
+       C.  Deactivate HSM #2.
+
+
+
+
+
+
+Schlyter, et al.                                               [Page 10]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+   3.  Store application data backup #1 and #2 in Safe #1 on-site.
+
+   4.  Transport application data (e.g., encrypted private KSK) backup
+       #3 and #4 to other the site where Media Deposit is executed as
+       described in Section 5.9.  While waiting for transport to the
+       other site, application data backup #3 and #4 may be stored in
+       Safe #1 and extracted for transport later as described in
+       Section 5.10.
+
+4.4.2.  Phase 2 (at other site)
+
+   1.  Retrieve application data backup #3 or #4 from Safe #1.
+
+   2.  Restore new key to HSM #1:
+
+       A.  Activate HSM #1.
+
+       B.  Restore application data backup to HSM #1.
+
+       C.  Deactivate HSM #1.
+
+   3.  Restore new key to HSM #2:
+
+       1.  Activate HSM #2.
+
+       2.  Restore application data backup to HSM #2.
+
+       3.  Deactivate HSM #2.
+
+   4.  Store application data backup #3 and #4 in Safe #1 on-site.
+
+4.5.  Key Signing (aka KSR Processing)
+
+   When a new Key Signing Request (KSR) is received from the ZSK
+   Operator, the KSR must be processed using the KSK.  The resulting
+   Signed Key Response (SKR) must then be sent back to the ZSK Operator.
+
+   1.  Activate HSM.
+
+   2.  Import KSR from portable media.
+
+   3.  Validate KSR data.
+
+   4.  Verify KSR integrity:
+
+       A.  Calculate hash (fingerprint) of KSR data.  The hash is
+           presented in PGP Word List format.
+
+
+
+
+Schlyter, et al.                                               [Page 11]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+       B.  Contact the ZSK operator via phone and have them read the
+           hash of the KSR data.  The hash is presented in PGP Word List
+           format.
+
+       C.  Compare the calculated hash and the hash received from the
+           ZSK operator.  The ceremony may not continue if the hashes do
+           not match.
+
+   5.  Process the KSR, producing corresponding SKR.
+
+   6.  Export SKR data to portable media.
+
+   7.  Deactivate HSM.
+
+4.6.  Private Key Deletion
+
+   After a private key has been unused for some time, it should be
+   deleted from all HSMs.  This operation would normally happen together
+   with another key management ceremony, e.g., key signing.
+
+   1.  Activate HSM.
+
+   2.  Perform key deletion from HSM.
+
+   3.  Verify that the key no longer exists.
+
+   4.  Deactivate HSM.
+
+4.7.  Key Management Ceremonies Epilogue
+
+   After any Key Management action has been executed, each Crypto
+   Officer's credentials and all HSMs must be moved back from Tier 4
+   (Key Ceremony Room) into their respective safes.
+
+
+5.  Administrative Ceremonies
+
+   Administrative Ceremonies include all ceremonies that do not require
+   activation of an HSM.
+
+5.1.  Safe Security Controller Enrolment
+
+   1.  Open already-unlocked safe.
+
+   2.  SSC sets new combination.
+
+   3.  SSC verifies new combination.
+
+
+
+
+Schlyter, et al.                                               [Page 12]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+   4.  Update and sign audit log and safe logbook.
+
+   5.  Close and lock safe.
+
+   6.  CA and IW verifies that the safe is locked.
+
+   NOTE: at least one new SSC needs to attend -- the non-attending new
+   SSC may receive the new combination from the attending new SSC.
+
+5.2.  Safe Security Controller Replacement
+
+   1.   Old SSC unlocks and opens safe.
+
+   2.   New SSC sets new combination.
+
+   3.   New SSC verifies new combination.
+
+   4.   New SSC Closes and locks safe.
+
+   5.   CA and IW verifies that the safe is locked.
+
+   6.   Old SSC confirms safe cannot be unlocked using old combination.
+
+   7.   New SSC unlock and opens safe.
+
+   8.   New SSC updates and signs audit log and safe logbook.
+
+   9.   New SSC closes and locks safe.
+
+   10.  CA and IW verifies that the safe is locked.
+
+   NOTE: at least one old and one new SSC needs to attend -- the non-
+   attending new SSC may receive new combination from the attending new
+   SSC.
+
+5.3.  Safe Security Controller Recovery
+
+   If the combination of a safe is lost, a new set of Safe Security
+   Controllers for the safe must be enrolled.
+
+   1.  Drill safe open.
+
+   2.  CA verifies safe contents.
+
+   3.  Safe door and/or lock mechanism is replaced.
+
+   4.  Continue with SSC enrolment as described in Section 5.1.
+
+
+
+
+Schlyter, et al.                                               [Page 13]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+   NOTE: At least one new SSC needs to attend -- the non-attending new
+   SSC may receive new combination from the attending new SSC.
+
+5.4.  Crypto Officer Enrolment
+
+   1.  CA distributes two (2) deposit box keys to CO.
+
+   2.  CO opens deposit box (together with CA common key) using first
+       key.
+
+   3.  CO verifies that the safe deposit box is empty.
+
+   4.  CO closes safe deposit box.
+
+   5.  CO opens safe deposit box (together with CA common key) using
+       second key.
+
+   6.  CO updates and signs audit log and deposit box logbook.
+
+   7.  CO closes deposit box.
+
+   NOTE: This procedure may be performed before the initial CO
+   credentials have been generated.
+
+5.5.  Crypto Officer Replacement
+
+   1.  Old CO opens safe deposit box (together with CA common key).
+
+   2.  Old and new CO verify safe deposit box contents.
+
+   3.  Safe deposit box lock is replaced.
+
+   4.  CA distributes two (2) new safe deposit box keys to new CO.
+
+   5.  New CO opens safe deposit box (together with CA common key) using
+       first key.
+
+   6.  New CO closes safe deposit box.
+
+   7.  New CO opens safe deposit box (together with CA common key) using
+       other key.
+
+   8.  New CO updates and signs audit log and safe deposit box logbook.
+
+   9.  New CO closes and locks safe deposit box.
+
+   NOTE: Both the old and the new CO need to attend.
+
+
+
+
+Schlyter, et al.                                               [Page 14]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+5.6.  Crypto Officer Recovery
+
+   If a Crypto Officer is lost, a new Crypto Officer must be enrolled.
+
+   1.  Drill safe deposit box lock.
+
+   2.  New CO verifies safe deposit box contents.
+
+   3.  Replace safe deposit box lock.
+
+   4.  Continue with CO enrolment as described in Section 5.4.
+
+   NOTE: The new CO needs to attend.
+
+5.7.  Recovery Key Share Holder Replacement
+
+   1.  Old RKSH provides Recovery Key Share in tamper-evident bag.
+
+   2.  CA and IW check the serial number of the tamper-evident bag
+       containing the Recovery Key Share.
+
+   3.  Recovery Key Share is given to new RKSH.
+
+   4.  New RKSH verifies that the tamper-evident bag is secure.
+
+   NOTE: This procedure is not required to be performed within a secure
+   facility.
+
+   NOTE: The Recovery Key shares are not to be extracted from the
+   tamper-evident bag during this procedure.
+
+   NOTE: Both the old and the new RKSK needs to attend.
+
+5.8.  Issuing New Recovery Key Shares
+
+   This procedure includes generating and distributing new sets of
+   Recovery Key Shares to all Recovery Key Share Holders.  The new
+   Recovery Key needs to be imported to all HSMs sharing the Recovery
+   Key, typically all HSMs at all sites.
+
+   More information about Recovery Key generation and distribution can
+   be found in Section 4.2.
+
+   NOTE: This ceremony is a Key Management Ceremony, since it requires
+   HSMs to be activated, and is listed here for completeness only.
+
+   NOTE: All RKSKs need to attend as a new set of Recovery Key shares
+   are generated and distributed as part of this procedure.
+
+
+
+Schlyter, et al.                                               [Page 15]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+5.9.  Media Deposit
+
+   Application Data Backup may be deposited in Safe #1 (Equipment Safe)
+   for use at a future key management ceremony or pending transport to
+   another site.  Media deposited may be extracted later as described in
+   Section 5.10.
+
+5.10.  Media Extraction
+
+   Application Data Backup previously placed into Safe #1 (Equipment
+   Safe), as described in Section 5.9, may be extracted using this
+   procedure.
+
+5.11.  Equipment Acceptance Test
+
+   The CA together with IW and SA must check and test incoming equipment
+   in Tier 4 and place it in Tier 5 (or Tier 6 if SSC available).
+
+5.12.  Equipment Maintenance
+
+   To perform maintenance on equipment contained in Safe #1 (Equipment
+   Safe), the equipment needs to be moved to Tier 4, where the
+   maintenance is conducted by the SA.
+
+
+6.  Unplanned Events
+
+   Unexpected events (exceptions) during the ceremony are evaluated,
+   documented and acted upon by the CA.  It is the CAs sole
+   responsibility to decide on proper actions and to maintain the chain
+   of custody.
+
+   In either case an exception will be regarded as an incident, and
+   incident handling procedures will be enacted.
+
+   If the event is severe enough to abort the ceremony and the ceremony
+   cannot be restarted at the site within the critical time frame, the
+   CA reports to the ICANN KSK Operations Security (IKOS), which in turn
+   reports to the Policy Management Authority (PMA).
+
+   Examples of unplanned events that may occur during a ceremony
+   include:
+
+   o  Hardware Failures
+
+   o  Software Failures
+
+
+
+
+
+Schlyter, et al.                                               [Page 16]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+   o  Crypto Officer's Credentials Failure
+
+   o  Recover Key Share Failure
+
+   o  Safe Failure
+
+   o  Safe Deposit Box Failure
+
+   o  General Facility Failure
+
+
+7.  References
+
+   [RFC1034]  Mockapetris, P., "Domain names - concepts and facilities",
+              STD 13, RFC 1034, November 1987.
+
+   [RFC1035]  Mockapetris, P., "Domain names - implementation and
+              specification", STD 13, RFC 1035, November 1987.
+
+   [RFC4033]  Arends, R., Austein, R., Larson, M., Massey, D., and S.
+              Rose, "DNS Security Introduction and Requirements",
+              RFC 4033, March 2005.
+
+   [RFC4034]  Arends, R., Austein, R., Larson, M., Massey, D., and S.
+              Rose, "Resource Records for the DNS Security Extensions",
+              RFC 4034, March 2005.
+
+   [RFC4035]  Arends, R., Austein, R., Larson, M., Massey, D., and S.
+              Rose, "Protocol Modifications for the DNS Security
+              Extensions", RFC 4035, March 2005.
+
+
+Appendix A.  Secure Facility Tiers
+
+A.1.  Tier 1-3
+
+   Tier 1-3 consists of the facility areas between the outside
+   environment and the Key Ceremony Room.
+
+A.2.  Tier 4
+
+   Tier 4 consists of the Key Ceremony Room and is subject to dual
+   occupancy (Section 3.6).
+
+A.3.  Tier 5
+
+   Tier 5 consists of the Safe Room, a cage inside the Key Ceremony
+   Room, and is subject to dual occupancy (Section 3.6).
+
+
+
+Schlyter, et al.                                               [Page 17]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+A.4.  Tier 6
+
+   Tier 6 consists of Safe #1 (Equipment Safe) and Safe #2 (Credentials
+   Safe).
+
+A.5.  Tier 7
+
+   Tier 7 consists of the HSM (Hardware Security Module) stored in Safe
+   #1 (Equipment Safe) and the safe deposit boxes mounted in Safe #2
+   (Credentials Safe).
+
+
+Appendix B.  Tier Access Matrix
+
+   The following table describes what roles have access to what facility
+   tier.
+
+   +------+----------+--------------+-------------+--------+-----------+
+   | Role | Tier 1-3 | Tier 4       | Tier 5      | Tier 6 | Tier 7    |
+   +------+----------+--------------+-------------+--------+-----------+
+   | CA   | Yes      | Yes, with IW | Yes, with   | No     | No        |
+   |      |          |              | IW          |        |           |
+   | IW   | Yes      | Yes, with    | Yes, with   | No     | No        |
+   |      |          | CA/SA        | CA          |        |           |
+   | SSC  | No       | No           | No          | Yes    | No        |
+   | CO   | No       | No           | No          | No     | Yes, >= 3 |
+   | RKSH | No       | No           | No          | No     | No        |
+   | SA   | Yes      | Yes, with IW | No          | No     | No        |
+   +------+----------+--------------+-------------+--------+-----------+
+
+
+Appendix C.  Number of People Summary
+
+   The following table describes how many people are required per role
+   per site, in total for all sites and whether a role is sharable
+   between sites (i.e. if someone serving as X for one site may also
+   service as X for another site).
+
+                +------+----------+----------+------------+
+                | Role | Per site | In total | Shareable? |
+                +------+----------+----------+------------+
+                | CA   | 2        | 4        | Yes        |
+                | IW   | 2        | 4        | Yes        |
+                | SSC1 | 2        | 4        | No         |
+                | SSC2 | 2        | 4        | No         |
+                | CO   | 7        | 14       | No         |
+                | RKSH | -        | 7        | Yes        |
+
+
+
+
+Schlyter, et al.                                               [Page 18]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+                | SA   | 2        | 4        | Yes        |
+                +------+----------+----------+------------+
+
+
+Appendix D.  Number of People per Ceremony
+
+   The following table describes the minimum number of people required
+   per role for each ceremony.
+
+   +--------------------------+----+----+------+------+----+----+------+
+   | Ceremony                 | CA | IW | SSC1 | SSC2 | SA | CO | RKSH |
+   +--------------------------+----+----+------+------+----+----+------+
+   | Primary HSM              | 1  | 2  | 1    | 1    | 1  | 7  | 7    |
+   | Initialisation           |    |    |      |      |    |    |      |
+   | Secondary HSM            | 1  | 2  | 1    | 1    | 1  | 7  | 5    |
+   | Initialisation           |    |    |      |      |    |    |      |
+   | HSM Decommission         | 1  | 2  | 1    | 1    | 1  | 7  | 0    |
+   | Key Generation           | 1  | 2  | 1    | 1    | 1  | 3  | 0    |
+   | Key Signing              | 1  | 2  | 1    | 1    | 1  | 3  | 0    |
+   | Private Key Removal      | 1  | 2  | 1    | 1    | 1  | 3  | 0    |
+   | SSC#1 Enrolment          | 1  | 1  | 1    | 0    | 0  | 0  | 0    |
+   | SSC#2 Enrolment          | 1  | 1  | 0    | 1    | 0  | 0  | 0    |
+   | SSC#1 Rotation           | 1  | 1  | 2    | 0    | 0  | 0  | 0    |
+   | SSC#2 Rotation           | 1  | 1  | 0    | 2    | 0  | 0  | 0    |
+   | SSC#1 Recovery           | 1  | 1  | 1    | 0    | 0  | 0  | 0    |
+   | SSC#2 Recovery           | 1  | 1  | 0    | 1    | 0  | 0  | 0    |
+   | CO Enrolment             | 1  | 1  | 0    | 1    | 0  | 7  | 0    |
+   | CO Rotation              | 1  | 1  | 0    | 1    | 0  | 2  | 0    |
+   | CO Recovery              | 1  | 1  | 0    | 1    | 0  | 1  | 0    |
+   | RKSH Rotation            | 1  | 1  | 0    | 0    | 0  | 0  | 2    |
+   | RKSH Recovery            | 1  | 1  | 1    | 1    | 2  | 3  | 7    |
+   | Media Deposit            | 1  | 1  | 1    | 0    | 0  | 0  | 0    |
+   | Media Extract            | 1  | 1  | 1    | 0    | 0  | 0  | 0    |
+   | HSM Acceptance Test      | 1  | 1  | 1    | 0    | 1  | 0  | 0    |
+   | Equipment Maintenance    | 1  | 1  | 1    | 0    | 1  | 0  | 0    |
+   +--------------------------+----+----+------+------+----+----+------+
+
+
+Authors' Addresses
+
+   Jakob Schlyter
+   Kirei AB
+   P.O. Box 53204
+   Goteborg  SE-400 16
+   Sweden
+
+   Email: jakob@kirei.se
+
+
+
+
+Schlyter, et al.                                               [Page 19]
+
+                        Root Zone KSK Ceremonies                May 2010
+
+
+   Fredrik Ljunggren
+   Kirei AB
+   P.O. Box 53204
+   Goteborg  SE-400 16
+   Sweden
+
+   Email: fredrik@kirei.se
+
+
+   Richard Lamb
+   Internet Corporation For Assigned Names and Numbers
+   4676 Admiralty Way, Suite 330
+   Marina del Ray, CA  90292
+   USA
+
+   Email: richard.lamb@icann.org
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Schlyter, et al.                                               [Page 20]
+
